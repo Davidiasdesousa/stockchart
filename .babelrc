@@ -1,0 +1,36 @@
+{
+	"presets": [
+		"@babel/preset-react",
+		"@babel/preset-env"
+	],
+	"plugins": [],
+	"env": {
+		"cjs": {
+			"presets": [["@babel/preset-env"]]
+		},
+		"es": {
+			"presets": [
+				["@babel/preset-env", { "modules": false }]
+			]
+		},
+		"watch": {
+			"presets": [
+				["@babel/preset-env", {
+					"targets": {
+						"chrome": 100
+					},
+					"modules": false
+				}]
+			]
+		},
+		"server": {
+			"presets": [
+				["@babel/preset-env", {
+					"targets": {
+						"node": 18
+					}
+				}]
+			]
+		}
+	}
+}
