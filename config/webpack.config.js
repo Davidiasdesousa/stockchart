@@ -1,7 +1,6 @@
 const webpack = require("webpack");
 const path = require("path");
 const { getIfUtils, removeEmpty } = require("webpack-config-utils");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
 const ProgressBarPlugin = require("progress-bar-webpack-plugin");
 
 const rootPath = path.join(__dirname, "..");
@@ -9,10 +8,7 @@ const rootPath = path.join(__dirname, "..");
 function buildConfig(mode) {
 	const { ifWatch, ifDocs } = getIfUtils(mode, ["docs", "watch"]);
 
-	const docsEntry = {
-		"react-stockcharts-home": "./docs/index.js",
-		"react-stockcharts-documentation": "./docs/documentation.js",
-	};
+	const entry = "./src/index.js"; // ou o arquivo principal do seu app
 
 	const devServer = {
 		static: {
@@ -32,7 +28,7 @@ function buildConfig(mode) {
 	console.log("MODE", mode);
 	return {
 		context,
-		entry: docsEntry,
+		entry,
 		mode: ifDocs("production", "development"),
 		output: {
 			path: path.join(rootPath, "build/"),
@@ -67,7 +63,13 @@ function buildConfig(mode) {
 				},
 				{
 					test: /\.md$/,
-					use: ["html-loader", "remarkable-loader"]
+					use: [
+						"html-loader",
+						{
+							loader: "remarkable-loader",
+							options: getRemarkable()
+						}
+					]
 				},
 				{
 					test: /\.scss$/,
@@ -94,27 +96,7 @@ function buildConfig(mode) {
 		plugins: removeEmpty([
 			new ProgressBarPlugin(),
 			new webpack.NoEmitOnErrorsPlugin(),
-
-			ifDocs(new webpack.DefinePlugin({
-				"process.env": {
-					NODE_ENV: JSON.stringify("production"),
-				},
-			})),
-
-			new HtmlWebpackPlugin({
-				template: "./docs/pageTemplate.js",
-				inject: false,
-				page: "index",
-				mode,
-				filename: "index.html"
-			}),
-			new HtmlWebpackPlugin({
-				template: "./docs/pageTemplate.js",
-				inject: false,
-				page: "documentation",
-				mode,
-				filename: "documentation.html"
-			}),
+			// Remova os HtmlWebpackPlugin relacionados à documentação
 		]),
 		devServer,
 		externals: {
